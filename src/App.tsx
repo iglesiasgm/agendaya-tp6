@@ -3,20 +3,33 @@ import "./App.css";
 
 import { ReservationList } from "./components/ReservationList";
 import { initialReservations } from "./data/reservations";
+import { ReservationDetails } from "./components/ReservationDetails";
+import { CancelReservationModal } from "./components/CancelReservationModal";
+
 import {
+  cancelReservation,
   filterReservationsByDate,
   sortReservationsByStartTime,
 } from "./domain/reservation";
 import type { Reservation } from "./types/reservation";
 
 function App() {
+  const [reservations, setReservations] =
+    useState<Reservation[]>(initialReservations);
+
+  const [selectedReservation, setSelectedReservation] =
+    useState<Reservation | null>(null);
+
+  const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
+
+  const [successMessage, setSuccessMessage] = useState("");
   const [selectedDate, setSelectedDate] = useState("");
   const [searchedDate, setSearchedDate] = useState("");
   const [dateError, setDateError] = useState("");
 
   const reservationsForSelectedDate = searchedDate
     ? sortReservationsByStartTime(
-        filterReservationsByDate(initialReservations, searchedDate),
+        filterReservationsByDate(reservations, searchedDate),
       )
     : [];
 
@@ -33,7 +46,36 @@ function App() {
   };
 
   const handleViewDetails = (reservation: Reservation) => {
-    console.log("Reserva seleccionada:", reservation);
+    setSelectedReservation(reservation);
+    setSuccessMessage("");
+  };
+
+  const handleCloseDetails = () => {
+    setSelectedReservation(null);
+  };
+
+  const handleRequestCancel = () => {
+    setIsCancelModalOpen(true);
+  };
+
+  const handleCloseCancelModal = () => {
+    setIsCancelModalOpen(false);
+  };
+
+  const handleConfirmCancellation = () => {
+    if (!selectedReservation) {
+      return;
+    }
+
+    const updatedReservations = cancelReservation(
+      reservations,
+      selectedReservation.id,
+    );
+
+    setReservations(updatedReservations);
+    setIsCancelModalOpen(false);
+    setSelectedReservation(null);
+    setSuccessMessage("Reserva cancelada correctamente.");
   };
 
   return (
@@ -49,6 +91,11 @@ function App() {
       </header>
 
       <section className="content-card">
+        {successMessage && (
+          <div className="success-message" data-cy="reservation-cancel-success">
+            {successMessage}
+          </div>
+        )}
         <h2>Reservas del día</h2>
 
         <form className="date-form" onSubmit={handleSearch}>
@@ -99,6 +146,20 @@ function App() {
           </section>
         )}
       </section>
+      {selectedReservation && (
+        <ReservationDetails
+          reservation={selectedReservation}
+          onClose={handleCloseDetails}
+          onRequestCancel={handleRequestCancel}
+        />
+      )}
+
+      {isCancelModalOpen && (
+        <CancelReservationModal
+          onConfirm={handleConfirmCancellation}
+          onClose={handleCloseCancelModal}
+        />
+      )}
     </main>
   );
 }

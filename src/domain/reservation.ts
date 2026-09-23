@@ -20,3 +20,23 @@ export const canCancelReservation = (reservation: Reservation): boolean => {
     reservation.status !== "CANCELLED" && reservation.status !== "COMPLETED"
   );
 };
+
+export const cancelReservation = (
+  reservations: Reservation[],
+  reservationId: string,
+): Reservation[] => {
+  return reservations.map((reservation) => {
+    if (reservation.id !== reservationId) {
+      return reservation;
+    }
+
+    if (!canCancelReservation(reservation)) {
+      return reservation;
+    }
+
+    return {
+      ...reservation,
+      status: "CANCELLED",
+    };
+  });
+};
