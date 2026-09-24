@@ -158,6 +158,25 @@
   justify-content: space-between;
 }
 
+.status-filter {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 16px 0;
+}
+
+.status-filter label {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.status-filter select {
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font: inherit;
+}
+
 .error-message {
   color: #b42318;
   font-size: 13px;
