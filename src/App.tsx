@@ -5,12 +5,17 @@ import { ReservationList } from "./components/ReservationList";
 import { initialReservations } from "./data/reservations";
 import { ReservationDetails } from "./components/ReservationDetails";
 import { CancelReservationModal } from "./components/CancelReservationModal";
+import {
+  StatusFilter,
+  type StatusFilterValue,
+} from "./components/StatusFilter";
 
 import {
   cancelReservation,
   filterReservationsByDate,
   sortReservationsByStartTime,
 } from "./domain/reservation";
+import { filterReservationsByStatus } from "./domain/reservationStatus";
 import type { Reservation } from "./types/reservation";
 
 function App() {
@@ -26,12 +31,18 @@ function App() {
   const [selectedDate, setSelectedDate] = useState("");
   const [searchedDate, setSearchedDate] = useState("");
   const [dateError, setDateError] = useState("");
+  const [statusFilter, setStatusFilter] = useState<StatusFilterValue>("ALL");
 
   const reservationsForSelectedDate = searchedDate
     ? sortReservationsByStartTime(
         filterReservationsByDate(reservations, searchedDate),
       )
     : [];
+
+  const visibleReservations =
+    statusFilter === "ALL"
+      ? reservationsForSelectedDate
+      : filterReservationsByStatus(reservationsForSelectedDate, statusFilter);
 
   const handleSearch = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -43,6 +54,7 @@ function App() {
 
     setDateError("");
     setSearchedDate(selectedDate);
+    setStatusFilter("ALL");
   };
 
   const handleViewDetails = (reservation: Reservation) => {
@@ -131,18 +143,31 @@ function App() {
             <div className="results-header">
               <h2>Resultados</h2>
 
-              <span>
-                {reservationsForSelectedDate.length}{" "}
-                {reservationsForSelectedDate.length === 1
-                  ? "reserva"
-                  : "reservas"}
+              <span data-cy="results-count">
+                {visibleReservations.length}{" "}
+                {visibleReservations.length === 1 ? "reserva" : "reservas"}
               </span>
             </div>
 
-            <ReservationList
-              reservations={reservationsForSelectedDate}
-              onViewDetails={handleViewDetails}
-            />
+            {reservationsForSelectedDate.length > 0 && (
+              <StatusFilter
+                reservations={reservationsForSelectedDate}
+                value={statusFilter}
+                onChange={setStatusFilter}
+              />
+            )}
+
+            {reservationsForSelectedDate.length > 0 &&
+            visibleReservations.length === 0 ? (
+              <p className="empty-message" data-cy="no-status-results-message">
+                No hay reservas con el estado seleccionado.
+              </p>
+            ) : (
+              <ReservationList
+                reservations={visibleReservations}
+                onViewDetails={handleViewDetails}
+              />
+            )}
           </section>
         )}
       </section>
