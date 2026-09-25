@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { hasTimeConflict, isTimeSlotAvailable } from "./disponibilidad";
+import { isTimeSlotAvailable } from "./disponibilidad";
 import type { Reservation } from "../types/reservation";
 
 // Array de reservas mockeado utilizado en todos los tests
