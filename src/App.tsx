@@ -149,6 +149,7 @@ function App() {
       {selectedReservation && (
         <ReservationDetails
           reservation={selectedReservation}
+          reservations={reservations}
           onClose={handleCloseDetails}
           onRequestCancel={handleRequestCancel}
         />
