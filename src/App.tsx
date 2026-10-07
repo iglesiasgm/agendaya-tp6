@@ -5,12 +5,14 @@ import { ReservationList } from "./components/ReservationList";
 import { initialReservations } from "./data/reservations";
 import { ReservationDetails } from "./components/ReservationDetails";
 import { CancelReservationModal } from "./components/CancelReservationModal";
+import { NonWorkingDayForm } from "./components/NonWorkingDayForm";
 
 import {
   cancelReservation,
   filterReservationsByDate,
   sortReservationsByStartTime,
 } from "./domain/reservation";
+import { addNonWorkingDay } from "./domain/dia-no-laborable";
 import type { Reservation } from "./types/reservation";
 
 function App() {
@@ -26,6 +28,7 @@ function App() {
   const [selectedDate, setSelectedDate] = useState("");
   const [searchedDate, setSearchedDate] = useState("");
   const [dateError, setDateError] = useState("");
+  const [nonWorkingDays, setNonWorkingDays] = useState<string[]>([]);
 
   const reservationsForSelectedDate = searchedDate
     ? sortReservationsByStartTime(
@@ -76,6 +79,10 @@ function App() {
     setIsCancelModalOpen(false);
     setSelectedReservation(null);
     setSuccessMessage("Reserva cancelada correctamente.");
+  };
+
+  const handleAddNonWorkingDay = (date: string) => {
+    setNonWorkingDays((current) => addNonWorkingDay(current, date));
   };
 
   return (
@@ -145,6 +152,14 @@ function App() {
             />
           </section>
         )}
+      </section>
+      <section className="content-card">
+        <h2>Días no laborables</h2>
+
+        <NonWorkingDayForm
+          nonWorkingDays={nonWorkingDays}
+          onAddNonWorkingDay={handleAddNonWorkingDay}
+        />
       </section>
       {selectedReservation && (
         <ReservationDetails
