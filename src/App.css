@@ -52,15 +52,51 @@
   margin-top: 0;
 }
 
-.date-form {
+.filters-bar {
   display: flex;
   align-items: flex-end;
+  flex-wrap: wrap;
   gap: 16px;
   padding-bottom: 28px;
   margin-bottom: 28px;
   border-bottom: 1px solid #eee;
 }
 
+.filter-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.filter-field label {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.filter-field input,
+.filter-field select {
+  min-width: 170px;
+  padding: 11px 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background: white;
+  color: inherit;
+  font: inherit;
+}
+
+.filter-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-left: auto;
+}
+
+.filters-bar .primary-button,
+.filters-bar .secondary-button {
+  padding: 11px 16px;
+}
+
+/* Campos del formulario de reagendar dentro del panel de detalle */
 .form-field {
   display: flex;
   flex: 1;
@@ -158,8 +194,26 @@
   justify-content: space-between;
 }
 
+.list-status {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
 .error-message {
   color: #b42318;
+  font-size: 13px;
+}
+
+.active-filter {
+  margin: 0;
+  color: #666;
+  font-size: 13px;
+}
+
+.reservation-date {
+  color: #666;
   font-size: 13px;
 }
 

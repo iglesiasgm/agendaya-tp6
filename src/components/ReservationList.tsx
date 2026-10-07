@@ -1,34 +1,32 @@
-import { useState } from "react";
 import type { Reservation } from "../types/reservation";
 import { ReservationCard } from "./ReservationCard";
-import {
-  filterReservationsByService,
-  getAvailableServices,
-} from "../domain/filtro-servicio";
+
+/**
+ * Causa posible de un listado vacío. El filtro de servicio y el de fecha
+ * pueden dejar la lista sin resultados por separado, y cada caso necesita
+ * un mensaje distinto para no confundir al usuario.
+ */
+export type EmptyReason = "date" | "service";
 
 interface ReservationListProps {
   reservations: Reservation[];
+  emptyReason: EmptyReason;
   onViewDetails: (reservation: Reservation) => void;
 }
 
 export const ReservationList = ({
   reservations,
+  emptyReason,
   onViewDetails,
 }: ReservationListProps) => {
-  // Estado del filtro: string vacío = "Todos los servicios"
-  const [selectedService, setSelectedService] = useState("");
-
-  // Servicios únicos disponibles a partir del array recibido
-  const availableServices = getAvailableServices(reservations);
-
-  // Reservas filtradas: si no hay filtro activo, se muestran todas
-  const filteredReservations =
-    selectedService === ""
-      ? reservations
-      : filterReservationsByService(reservations, selectedService);
-
   if (reservations.length === 0) {
-    return (
+    // Si la fecha tiene reservas pero el listado llegó vacío, el filtro
+    // de servicio es el responsable aunque la fecha también esté activa.
+    return emptyReason === "service" ? (
+      <p className="empty-message" data-cy="empty-filter-message">
+        No hay reservas para el servicio seleccionado.
+      </p>
+    ) : (
       <p className="empty-message" data-cy="no-reservations-message">
         No hay reservas para la fecha seleccionada.
       </p>
@@ -36,46 +34,14 @@ export const ReservationList = ({
   }
 
   return (
-    <div>
-      {/* ── Control de filtro por tipo de servicio ── */}
-      <div className="filter-bar">
-        <label htmlFor="filtro-servicio">Filtrar por servicio:</label>
-
-        <select
-          id="filtro-servicio"
-          data-cy="select-filtro-servicio"
-          value={selectedService}
-          onChange={(e) => setSelectedService(e.target.value)}
-        >
-          <option value="">Todos los servicios</option>
-
-          {availableServices.map((service) => (
-            <option key={service} value={service}>
-              {service}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      {/* ── Lista de reservas filtradas ── */}
-      {filteredReservations.length === 0 ? (
-        <p
-          className="empty-message"
-          data-cy="empty-filter-message"
-        >
-          No hay reservas para el servicio seleccionado.
-        </p>
-      ) : (
-        <div className="reservation-list" data-cy="reservation-list">
-          {filteredReservations.map((reservation) => (
-            <ReservationCard
-              key={reservation.id}
-              reservation={reservation}
-              onViewDetails={onViewDetails}
-            />
-          ))}
-        </div>
-      )}
+    <div className="reservation-list" data-cy="reservation-list">
+      {reservations.map((reservation) => (
+        <ReservationCard
+          key={reservation.id}
+          reservation={reservation}
+          onViewDetails={onViewDetails}
+        />
+      ))}
     </div>
   );
 };

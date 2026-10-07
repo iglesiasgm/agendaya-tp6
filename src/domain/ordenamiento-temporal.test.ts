@@ -234,3 +234,97 @@ describe("sortReservationsByDateAndTime", () => {
     expect(result).not.toBe(reservations);
   });
 });
+
+describe("sortReservationsByDateAndTime con direction 'desc'", () => {
+  it("ordena de más recientes a más antiguas por fecha", () => {
+    // Arrange
+    const reservations = [
+      createReservation({ id: "reservation-1", date: "2026-09-22" }),
+      createReservation({ id: "reservation-3", date: "2026-09-24" }),
+      createReservation({ id: "reservation-2", date: "2026-09-23" }),
+    ];
+
+    // Act
+    const result = sortReservationsByDateAndTime(reservations, "desc");
+
+    // Assert
+    expect(result.map((reservation) => reservation.date)).toEqual([
+      "2026-09-24",
+      "2026-09-23",
+      "2026-09-22",
+    ]);
+  });
+
+  it("ordena de más reciente a más antigua por hora dentro de la misma fecha", () => {
+    // Arrange
+    const reservations = [
+      createReservation({ id: "reservation-1", date: "2026-09-23", startTime: "09:00" }),
+      createReservation({ id: "reservation-2", date: "2026-09-23", startTime: "11:00" }),
+      createReservation({ id: "reservation-3", date: "2026-09-23", startTime: "15:00" }),
+    ];
+
+    // Act
+    const result = sortReservationsByDateAndTime(reservations, "desc");
+
+    // Assert
+    expect(result.map((reservation) => reservation.startTime)).toEqual([
+      "15:00",
+      "11:00",
+      "09:00",
+    ]);
+  });
+
+  it("devuelve exactamente el orden inverso al ascendente", () => {
+    // Arrange
+    const reservations = [
+      createReservation({ id: "reservation-5", date: "2026-09-24", startTime: "08:30" }),
+      createReservation({ id: "reservation-1", date: "2026-09-22", startTime: "11:00" }),
+      createReservation({ id: "reservation-3", date: "2026-09-23", startTime: "09:00" }),
+      createReservation({ id: "reservation-2", date: "2026-09-22", startTime: "15:00" }),
+    ];
+
+    // Act
+    const asc = sortReservationsByDateAndTime(reservations);
+    const desc = sortReservationsByDateAndTime(reservations, "desc");
+
+    // Assert
+    expect(desc.map((reservation) => reservation.id)).toEqual(
+      [...asc].reverse().map((reservation) => reservation.id),
+    );
+  });
+
+  it("conserva las reservas que comparten fecha y hora de inicio", () => {
+    // Arrange
+    const reservations = [
+      createReservation({ id: "reservation-1", date: "2026-09-23" }),
+      createReservation({ id: "reservation-2", date: "2026-09-23" }),
+    ];
+
+    // Act
+    const result = sortReservationsByDateAndTime(reservations, "desc");
+
+    // Assert
+    expect(result).toHaveLength(2);
+    expect(result.map((reservation) => reservation.id).sort()).toEqual([
+      "reservation-1",
+      "reservation-2",
+    ]);
+  });
+
+  it("no modifica el array original al ordenar en descendente", () => {
+    // Arrange
+    const reservations = [
+      createReservation({ id: "reservation-5", date: "2026-09-24" }),
+      createReservation({ id: "reservation-1", date: "2026-09-22" }),
+    ];
+
+    const originalOrder = [...reservations];
+
+    // Act
+    const result = sortReservationsByDateAndTime(reservations, "desc");
+
+    // Assert
+    expect(reservations).toEqual(originalOrder);
+    expect(result).not.toBe(reservations);
+  });
+});

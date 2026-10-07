@@ -47,6 +47,17 @@ export const ReservationCard = ({
 
           <p>{reservation.service}</p>
 
+          {/*
+           * La fecha se renderiza siempre para que las reservas de distintos
+           * días sean distinguibles cuando la lista muestra todas sin filtro.
+           */}
+          <p
+            className="reservation-date"
+            data-cy={`reservation-date-${reservation.id}`}
+          >
+            {reservation.date}
+          </p>
+
           <p>
             {reservation.startTime} - {reservation.endTime}
           </p>

@@ -2,6 +2,7 @@ import { useState } from "react";
 import "./App.css";
 
 import { ReservationList } from "./components/ReservationList";
+import type { EmptyReason } from "./components/ReservationList";
 import { initialReservations } from "./data/reservations";
 import { ReservationDetails } from "./components/ReservationDetails";
 import { CancelReservationModal } from "./components/CancelReservationModal";
@@ -9,8 +10,13 @@ import { CancelReservationModal } from "./components/CancelReservationModal";
 import {
   cancelReservation,
   filterReservationsByDate,
-  sortReservationsByStartTime,
 } from "./domain/reservation";
+import {
+  filterReservationsByService,
+  getAvailableServices,
+} from "./domain/filtro-servicio";
+import { sortReservationsByDateAndTime } from "./domain/ordenamiento-temporal";
+import type { SortDirection } from "./domain/ordenamiento-temporal";
 import type { Reservation } from "./types/reservation";
 
 function App() {
@@ -24,25 +30,39 @@ function App() {
 
   const [successMessage, setSuccessMessage] = useState("");
   const [selectedDate, setSelectedDate] = useState("");
-  const [searchedDate, setSearchedDate] = useState("");
-  const [dateError, setDateError] = useState("");
+  const [selectedService, setSelectedService] = useState("");
+  const [sortDirection, setSortDirection] = useState<SortDirection>("asc");
 
-  const reservationsForSelectedDate = searchedDate
-    ? sortReservationsByStartTime(
-        filterReservationsByDate(reservations, searchedDate),
-      )
-    : [];
+  // Los filtros se aplican en cadena y el orden es temporal: primero por
+  // fecha y, dentro de cada fecha, por hora de inicio.
+  // La fecha es un filtro adicional, no obligatorio: si no hay fecha cargada
+  // el listado parte de todas las reservas.
+  const reservationsForDate = selectedDate
+    ? filterReservationsByDate(reservations, selectedDate)
+    : reservations;
 
-  const handleSearch = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  // Las opciones del selector dependen de la fecha elegida, igual que antes
+  // de mover el filtro a este componente.
+  const availableServices = getAvailableServices(reservationsForDate);
 
-    if (!selectedDate) {
-      setDateError("Seleccioná una fecha para consultar las reservas.");
-      return;
-    }
+  const reservationsForService = selectedService
+    ? filterReservationsByService(reservationsForDate, selectedService)
+    : reservationsForDate;
 
-    setDateError("");
-    setSearchedDate(selectedDate);
+  const visibleReservations = sortReservationsByDateAndTime(
+    reservationsForService,
+    sortDirection,
+  );
+
+  // Solo el filtro de servicio puede vaciar una lista que la fecha dejó con
+  // contenido; en caso contrario el vacío se atribuye a la fecha.
+  const emptyReason: EmptyReason =
+    reservationsForDate.length > 0 && reservationsForService.length === 0
+      ? "service"
+      : "date";
+
+  const handleToggleSortDirection = () => {
+    setSortDirection((current) => (current === "asc" ? "desc" : "asc"));
   };
 
   const handleViewDetails = (reservation: Reservation) => {
@@ -84,7 +104,7 @@ function App() {
         <div>
           <span className="eyebrow">AgendaYA</span>
           <h1>Gestión de Agenda</h1>
-          <p>Consultá las reservas correspondientes a un día.</p>
+          <p>Consultá todas las reservas o filtrá por una fecha concreta.</p>
         </div>
 
         <span className="admin-badge">Administrador</span>
@@ -96,11 +116,14 @@ function App() {
             {successMessage}
           </div>
         )}
-        <h2>Reservas del día</h2>
-
-        <form className="date-form" onSubmit={handleSearch}>
-          <div className="form-field">
-            <label htmlFor="reservation-date">Fecha</label>
+        <form
+          className="filters-bar"
+          // Cada filtro se aplica en vivo al cambiar el control; el submit
+          // solo evita la recarga de la página al presionar Enter.
+          onSubmit={(event) => event.preventDefault()}
+        >
+          <div className="filter-field">
+            <label htmlFor="reservation-date">Fecha (opcional)</label>
 
             <input
               id="reservation-date"
@@ -109,42 +132,95 @@ function App() {
               data-cy="daily-date-input"
               onChange={(event) => setSelectedDate(event.target.value)}
             />
-
-            {dateError && (
-              <span className="error-message" data-cy="date-error">
-                {dateError}
-              </span>
-            )}
           </div>
 
-          <button
-            type="submit"
-            className="primary-button"
-            data-cy="search-reservations-button"
-          >
-            Buscar reservas
-          </button>
+          <div className="filter-field">
+            <label htmlFor="filtro-servicio">Servicio</label>
+
+            <select
+              id="filtro-servicio"
+              data-cy="select-filtro-servicio"
+              value={selectedService}
+              onChange={(event) => setSelectedService(event.target.value)}
+            >
+              <option value="">Todos los servicios</option>
+
+              {availableServices.map((service) => (
+                <option key={service} value={service}>
+                  {service}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="filter-field">
+            <label htmlFor="sort-reservations-button">Ordenar por</label>
+
+            <button
+              id="sort-reservations-button"
+              type="button"
+              className="secondary-button"
+              data-cy="sort-reservations-button"
+              onClick={handleToggleSortDirection}
+            >
+              {sortDirection === "asc"
+                ? "Ver recientes primero"
+                : "Ver antiguas primero"}
+            </button>
+          </div>
+
+          <div className="filter-actions">
+            <button
+              type="submit"
+              className="primary-button"
+              data-cy="search-reservations-button"
+            >
+              Buscar
+            </button>
+
+            {selectedDate && (
+              <button
+                type="button"
+                className="secondary-button"
+                data-cy="clear-date-filter-button"
+                onClick={() => setSelectedDate("")}
+              >
+                Limpiar filtro
+              </button>
+            )}
+          </div>
         </form>
 
-        {searchedDate && (
-          <section data-cy="search-results">
-            <div className="results-header">
-              <h2>Resultados</h2>
+        <section data-cy="search-results">
+          <div className="results-header">
+            <h2>Resultados</h2>
 
-              <span>
-                {reservationsForSelectedDate.length}{" "}
-                {reservationsForSelectedDate.length === 1
-                  ? "reserva"
-                  : "reservas"}
-              </span>
-            </div>
+            <span>
+              {visibleReservations.length}{" "}
+              {visibleReservations.length === 1 ? "reserva" : "reservas"}
+            </span>
+          </div>
 
-            <ReservationList
-              reservations={reservationsForSelectedDate}
-              onViewDetails={handleViewDetails}
-            />
-          </section>
-        )}
+          <div className="list-status">
+            <p className="active-filter" data-cy="active-filter">
+              {selectedDate
+                ? `Filtrando por el ${selectedDate}`
+                : "Mostrando todas las reservas"}
+            </p>
+
+            <p className="active-filter" data-cy="sort-order-indicator">
+              {sortDirection === "asc"
+                ? "Orden: más antiguas primero"
+                : "Orden: más recientes primero"}
+            </p>
+          </div>
+
+          <ReservationList
+            reservations={visibleReservations}
+            emptyReason={emptyReason}
+            onViewDetails={handleViewDetails}
+          />
+        </section>
       </section>
       {selectedReservation && (
         <ReservationDetails
