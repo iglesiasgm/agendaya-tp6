@@ -230,15 +230,15 @@ npm run cy:run
 
 # ✅ Scripts disponibles
 
-| Comando | Uso |
-| --- | --- |
-| `npm run dev` | Levanta Vite en desarrollo |
-| `npm run build` | Genera el build de producción |
-| `npm run lint` | Ejecuta ESLint |
-| `npm run test` | Ejecuta Vitest en modo watch |
+| Comando            | Uso                                       |
+| ------------------ | ----------------------------------------- |
+| `npm run dev`      | Levanta Vite en desarrollo                |
+| `npm run build`    | Genera el build de producción             |
+| `npm run lint`     | Ejecuta ESLint                            |
+| `npm run test`     | Ejecuta Vitest en modo watch              |
 | `npm run test:run` | Ejecuta todos los tests unitarios una vez |
-| `npm run cy:open` | Abre Cypress en modo interactivo |
-| `npm run cy:run` | Ejecuta Cypress en modo headless |
+| `npm run cy:open`  | Abre Cypress en modo interactivo          |
+| `npm run cy:run`   | Ejecuta Cypress en modo headless          |
 
 ---
 
@@ -332,11 +332,7 @@ Los elementos interactivos utilizan atributos `data-cy`.
 Ejemplo:
 
 ```tsx
-<button
-  data-cy="cancel-reservation-button"
->
-  Cancelar reserva
-</button>
+<button data-cy="cancel-reservation-button">Cancelar reserva</button>
 ```
 
 Y Cypress lo selecciona así:
@@ -375,7 +371,7 @@ Prueba funciones aisladas de lógica de negocio.
 Ejemplo:
 
 ```ts
-canCancelReservation(reservation)
+canCancelReservation(reservation);
 ```
 
 Esto permite detectar errores de lógica sin necesidad de levantar un navegador.

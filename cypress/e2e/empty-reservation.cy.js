@@ -14,7 +14,7 @@ describe("AgendaYA - Búsqueda sin resultados", () => {
     cy.get('[data-cy="no-reservations-message"]')
       .should("be.visible")
       .and("contain", "No hay reservas para la fecha seleccionada.");
-      
+
     // Verificamos que el contenedor de la lista de tarjetas no se haya renderizado
     cy.get('[data-cy="reservation-list"]').should("not.exist");
   });

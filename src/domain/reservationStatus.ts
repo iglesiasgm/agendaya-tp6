@@ -1,7 +1,4 @@
-import type {
-  Reservation,
-  ReservationStatus,
-} from "../types/reservation";
+import type { Reservation, ReservationStatus } from "../types/reservation";
 
 export const filterReservationsByStatus = (
   reservations: Reservation[],
