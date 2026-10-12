@@ -1,20 +1,38 @@
 name: cicd-pipeline
 
-on: 
-    pull_request:
+on:
+  pull_request:
+    branches:
+      - main
+      - develop
+      - 'tp**'
 
 jobs:
-  build:
+  quality-check:
+    name: Verificaciones de Calidad y Build
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-      - run: npm install
-      - run: npm run build
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-      - run: npm install
-      - run: npm test
+      - name: Checkout del repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: 1. Verificar Formato (Prettier)
+        run: npx prettier --check .
+
+      - name: 2. Verificar Linter (ESLint)
+        run: npm run lint
+
+      - name: 3. Ejecutar Tests Unitarios
+        run: npm test -- --run
+
+      - name: 4. Verificar Build
+        run: npm run build

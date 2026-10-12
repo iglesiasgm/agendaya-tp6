@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: kiwi
+      POSTGRES_USER: kiwi
+      POSTGRES_PASSWORD: kiwipassword
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+  kiwi:
+    image: kiwitcms/kiwi
+    ports:
+      - "8443:8443"
+      - "8080:8080"
+    environment:
+      KIWI_DB_ENGINE: django.db.backends.postgresql
+      KIWI_DB_NAME: kiwi
+      KIWI_DB_USER: kiwi
+      KIWI_DB_PASSWORD: kiwipassword
+      KIWI_DB_HOST: db
+      KIWI_DB_PORT: 5432
+    depends_on:
+      - db
+    volumes:
+      - kiwi_uploads:/Kiwi/uploads
+
+volumes:
+  db_data:
+  kiwi_uploads:
