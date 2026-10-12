@@ -33,17 +33,11 @@ describe("AgendaYA - Disponibilidad al reagendar", () => {
     // ── Act ───────────────────────────────────────────────────────────────────
     // Limpia los inputs e ingresa el horario conflictivo:
     // reservation-2 ya ocupa 11:00-11:30 el mismo día
-    cy.get('[data-cy="input-reagendar-fecha"]')
-      .clear()
-      .type("2026-09-23");
+    cy.get('[data-cy="input-reagendar-fecha"]').clear().type("2026-09-23");
 
-    cy.get('[data-cy="input-reagendar-inicio"]')
-      .clear()
-      .type("11:00");
+    cy.get('[data-cy="input-reagendar-inicio"]').clear().type("11:00");
 
-    cy.get('[data-cy="input-reagendar-fin"]')
-      .clear()
-      .type("11:30");
+    cy.get('[data-cy="input-reagendar-fin"]').clear().type("11:30");
 
     // Confirma el reagendamiento con el horario en conflicto
     cy.get('[data-cy="btn-confirmar-reagendamiento"]').click();

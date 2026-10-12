@@ -59,10 +59,7 @@ export const ReservationList = ({
 
       {/* ── Lista de reservas filtradas ── */}
       {filteredReservations.length === 0 ? (
-        <p
-          className="empty-message"
-          data-cy="empty-filter-message"
-        >
+        <p className="empty-message" data-cy="empty-filter-message">
           No hay reservas para el servicio seleccionado.
         </p>
       ) : (

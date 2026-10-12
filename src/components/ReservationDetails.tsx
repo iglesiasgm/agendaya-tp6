@@ -29,9 +29,7 @@ export const ReservationDetails = ({
   // Estado del formulario de reagendamiento
   const [isRescheduling, setIsRescheduling] = useState(false);
   const [rescheduleDate, setRescheduleDate] = useState(reservation.date);
-  const [rescheduleStart, setRescheduleStart] = useState(
-    reservation.startTime,
-  );
+  const [rescheduleStart, setRescheduleStart] = useState(reservation.startTime);
   const [rescheduleEnd, setRescheduleEnd] = useState(reservation.endTime);
   const [conflictError, setConflictError] = useState("");
 
