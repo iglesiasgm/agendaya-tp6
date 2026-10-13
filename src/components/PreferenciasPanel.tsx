@@ -32,9 +32,9 @@ export const PreferenciasPanel: React.FC<PreferenciasPanelProps> = ({
   const [warningMessage, setWarningMessage] = useState<string | null>(null);
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
 
-  const warnTimerRef = useRef<NodeJS.Timeout | null>(null);
-  const abortTimerRef = useRef<NodeJS.Timeout | null>(null);
-  const spinnerTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const warnTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const abortTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const spinnerTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // M05-CP05: Guardado en localStorage ante cambios
   const handleViewChange = (newView: CalendarView) => {
