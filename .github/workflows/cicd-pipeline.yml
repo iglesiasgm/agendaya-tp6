@@ -36,3 +36,9 @@ jobs:
 
       - name: 4. Verificar Build
         run: npm run build
+
+      - name: 5. Ejecutar Tests E2E (Cypress)
+        uses: cypress-io/github-action@v6
+        with:
+          start: npm run dev
+          wait-on: "http://localhost:5173"

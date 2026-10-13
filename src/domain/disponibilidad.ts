@@ -13,7 +13,7 @@ export const hasTimeConflict = (
   existingStart: string,
   existingEnd: string,
 ): boolean => {
-  return newStart <= existingEnd && newEnd >= existingStart;
+  return newStart < existingEnd && newEnd > existingStart;
 };
 
 /**

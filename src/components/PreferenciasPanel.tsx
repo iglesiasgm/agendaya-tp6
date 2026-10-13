@@ -32,9 +32,9 @@ export const PreferenciasPanel: React.FC<PreferenciasPanelProps> = ({
   const [warningMessage, setWarningMessage] = useState<string | null>(null);
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
 
-  const warnTimerRef = useRef<NodeJS.Timeout | null>(null);
-  const abortTimerRef = useRef<NodeJS.Timeout | null>(null);
-  const spinnerTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const warnTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const abortTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const spinnerTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // M05-CP05: Guardado en localStorage ante cambios
   const handleViewChange = (newView: CalendarView) => {
@@ -103,6 +103,7 @@ export const PreferenciasPanel: React.FC<PreferenciasPanelProps> = ({
       if (warnTimerRef.current) clearTimeout(warnTimerRef.current);
       if (abortTimerRef.current) clearTimeout(abortTimerRef.current);
       setStatusMessage("Preferencias actualizadas con éxito");
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       if (err?.message === "TIMEOUT_EXCEEDED") {
         setStatusMessage(
