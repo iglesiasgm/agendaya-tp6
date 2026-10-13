@@ -12,9 +12,7 @@ export const filterReservationsByService = (
   reservations: Reservation[],
   service: string,
 ): Reservation[] => {
-  return reservations.filter(
-    (reservation) => reservation.service === service,
-  );
+  return reservations.filter((reservation) => reservation.service === service);
 };
 
 /**

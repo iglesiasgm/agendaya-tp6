@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { hasTimeConflict, isTimeSlotAvailable } from "./disponibilidad";
+import { isTimeSlotAvailable } from "./disponibilidad";
 import type { Reservation } from "../types/reservation";
 
 // Array de reservas mockeado utilizado en todos los tests
@@ -120,6 +120,20 @@ describe("Disponibilidad al reagendar", () => {
     );
 
     // Assert
+    expect(result).toBe(true);
+  });
+
+  it("INC-0524: reproduce defecto - no debe considerar conflicto a turnos consecutivos exactos", () => {
+    // reservation-1 ocupa 09:00 a 10:00 el 2026-09-23
+    // El nuevo horario arranca justo a las 10:00 (10:00 a 11:00)
+    const result = isTimeSlotAvailable(
+      "2026-09-23",
+      "10:00",
+      "11:00",
+      mockReservations,
+    );
+
+    // Debe estar disponible (true). Con el defecto inyectado (<=), devolverá false y FALLARÁ.
     expect(result).toBe(true);
   });
 });

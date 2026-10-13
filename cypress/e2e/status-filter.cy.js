@@ -35,9 +35,7 @@ describe("AgendaYA - Filtro de reservas por estado", () => {
 
   it("muestra solamente las reservas pendientes al filtrar por PENDING", () => {
     // Arrange
-    cy.get('[data-cy="reservation-list"]')
-      .children()
-      .should("have.length", 3);
+    cy.get('[data-cy="reservation-list"]').children().should("have.length", 3);
 
     // Act
     cy.get('[data-cy="status-filter"]').select("PENDING");
@@ -72,17 +70,13 @@ describe("AgendaYA - Filtro de reservas por estado", () => {
   it("vuelve a mostrar todas las reservas al elegir 'Todos'", () => {
     // Arrange
     cy.get('[data-cy="status-filter"]').select("CONFIRMED");
-    cy.get('[data-cy="reservation-list"]')
-      .children()
-      .should("have.length", 1);
+    cy.get('[data-cy="reservation-list"]').children().should("have.length", 1);
 
     // Act
     cy.get('[data-cy="status-filter"]').select("ALL");
 
     // Assert
     cy.get('[data-cy="results-count"]').should("contain", "3 reservas");
-    cy.get('[data-cy="reservation-list"]')
-      .children()
-      .should("have.length", 3);
+    cy.get('[data-cy="reservation-list"]').children().should("have.length", 3);
   });
 });

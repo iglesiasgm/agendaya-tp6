@@ -1,7 +1,4 @@
-import type {
-  Reservation,
-  ReservationStatus,
-} from "../types/reservation";
+import type { Reservation, ReservationStatus } from "../types/reservation";
 import { countReservationsByStatus } from "../domain/reservationStatus";
 
 export type StatusFilterValue = ReservationStatus | "ALL";
@@ -33,9 +30,7 @@ export const StatusFilter = ({
         id="status-filter"
         value={value}
         data-cy="status-filter"
-        onChange={(event) =>
-          onChange(event.target.value as StatusFilterValue)
-        }
+        onChange={(event) => onChange(event.target.value as StatusFilterValue)}
       >
         <option value="ALL">{`Todos (${reservations.length})`}</option>
 
