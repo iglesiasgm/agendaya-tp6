@@ -103,6 +103,7 @@ export const PreferenciasPanel: React.FC<PreferenciasPanelProps> = ({
       if (warnTimerRef.current) clearTimeout(warnTimerRef.current);
       if (abortTimerRef.current) clearTimeout(abortTimerRef.current);
       setStatusMessage("Preferencias actualizadas con éxito");
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       if (err?.message === "TIMEOUT_EXCEEDED") {
         setStatusMessage(
